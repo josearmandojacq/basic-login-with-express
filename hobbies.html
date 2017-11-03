@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hobbies</title>
+</head>
+<body>
+    <h1></h1>
+    <ul></ul>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+
+
+       $.getJSON('./selectedUser', function(data) {
+           console.log(data.hobbies);
+           var hobbies = data.hobbies.trim('').split(',');
+
+           console.log(hobbies);
+           $('h1').text(data.firstname + ' ' + 'Hobbies:');
+        hobbies.forEach(function (item) {
+            var p = $('<li></li>').text(item);
+            $('ul').append(p);
+        });
+
+       });
+
+    </script>
+</body>
+</html>

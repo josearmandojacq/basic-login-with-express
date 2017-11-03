@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <title>Document</title>
+  <style type="text/css">
+  </style>
+
+</head>
+
+<body>
+  <a href="http://localhost:8080"><h1>Add New</h1></a>
+
+  <table id="table" class="table"></table>
+
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+        <!--<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+              <p>Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>-->
+
+    </div>
+
+  </div>
+
+  <script>
+      $(document).ready(function () {
+        var html = "";
+        var table = document.querySelector('#table');
+
+        function loadData(url, fun) {
+          var xmHttp = new XMLHttpRequest();
+          xmHttp.addEventListener('load', function() {
+            var response = JSON.parse(xmHttp.responseText);
+
+            fun(response);
+          });
+          xmHttp.open('get', url);
+          xmHttp.send();
+        }
+
+        function renderTable(data) {
+
+          html += '<thead class="thead-inverse">';
+          html += '<tr>';
+          html += '<th>' + 'Name' + '</th>';
+          html += '<th>' + 'Last Name' + '</th>';
+          html += '<th>' + 'Email' + '</th>';
+          html += '<th>' + 'Phone Number' + '</th>';
+          html += '<th>' + '</th>';
+          html += '<th>' + '</th>';
+          html += '</tr>';
+          html += '</thead>';
+          html += '<tbody>';
+          data.forEach(function(rec) {
+
+            html += '<tr>';
+            html += '<td>' + rec.first_name + '</td>';
+            html += '<td>' + rec.last_name + '</td>';
+            html += '<td>' + rec.email + '</td>';
+            html += '<td>' + rec.phone + '</td>';
+            html += '<td>' + '<a class="btn btn-primary" href= "http://localhost:8080/send_email?email=' + rec.email + '">' + 'Send' + '</a>' + '</td>';
+            html += '<td>' + '<button id="button" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-user-id=' + rec._id +' ' + 'data-target="#myModal" ' + '>' + 'More' + '</button>' + '</td>';
+            html += '</tr>';
+
+          });
+
+          html += '</tbody>';
+          table.innerHTML = html;
+
+          $('button').on('click', selectButton);
+        }
+
+       loadData('http://localhost:8080/get_contacts', renderTable);
+
+
+        function selectButton() {
+            let id = this.dataset.userId;
+            let modal = '';
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8080/get_contacts',
+                dataType: 'json',
+                success: function (data) {
+
+                  data.forEach(function(item) {
+                     if (id ===item._id) {
+
+                         modal += '<div class="modal-content">';
+                         modal += '<div class="modal-header">';
+                         modal += '<button type="button" class="close" data-dismiss="modal">&times;</button>';
+                         modal += '</div>';
+                         modal += '<div class="modal-body">';
+                         /*
+                         modal += '<ul>';
+                         item.hobbies.split(',').forEach(function (hobbie) {
+                             modal += '<li>' + hobbie + '</li>';
+                         });
+                         modal += '</ul>';
+                         */
+                         modal += '<button id="hobbies" class="btn btn-primary">' + 'Hobbies' + '</button>';
+                         modal += '<button id="edit" class="btn btn-primary">' +  'Edit' + '</button>';
+                         modal += '<button id="delete" class="btn btn-primary">' + 'Delete' + '</button>';
+                         modal += '</div>';
+                         modal += '<div class="modal-footer">';
+                         modal += '<button type="button" class="btn btn-default" data-dismiss="modal">' + 'Close' + '</button>';
+                         modal += '</div>';
+                         modal += '</div>';
+                     }
+                  });
+                  $(".modal-dialog").html(modal);
+
+                }
+            });
+
+        }
+    });
+
+
+
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+</body>
+
+</html>
